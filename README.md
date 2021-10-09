@@ -29,8 +29,21 @@ When player loses all HP his nickname's color changes to red.
 </p>
 
 ## To do
-As we implemented netcode from scratch it is not optimized well. Ping influences significantly on players movement. 
+1. As we implemented netcode from scratch it is not optimized well. Ping influences significantly on players movement. 
+  
+      Possible netcode improvements:
+  
+      * Movement interpolation
+      * Optimizing exchanging data packagings
+      
+2. Add gameplay features
+   * Weapon variety and reloading
+   * Advanced zombie AI
+   * Consumables (MedKits, temporary bonuses, etc.)
+   * Map variety
+   * Bosses and enemy types.
 
-Possible code improvements:
-1. Movement interpolation.
-2. Optimizing exchanging data packagings.
+## Gratitudes
+[Vitalik Tsarik](https://github.com/VitalikTsarik)
+
+[Alexei Kedo](https://eune.op.gg/summoner/userName=alex+000+01)

@@ -10,8 +10,8 @@ The project is made in C++ with SFML. To connect players we added ``` winsock.h 
 4. Enjoy :wink:
 
 <p float="left">
-<img src="https://user-images.githubusercontent.com/64905551/136289216-82c82e0b-79be-4889-b712-a9791a8e7905.png" width="480" />
-<img src="https://user-images.githubusercontent.com/64905551/136289252-5b63391d-c84b-478d-8613-5f7c96ffd2b2.png" width="480" />
+<img src="https://user-images.githubusercontent.com/64905551/136289216-82c82e0b-79be-4889-b712-a9791a8e7905.png" width="400" />
+<img src="https://user-images.githubusercontent.com/64905551/136289252-5b63391d-c84b-478d-8613-5f7c96ffd2b2.png" width="400" />
 </p>
 
 ## Gameplay

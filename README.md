@@ -46,4 +46,4 @@ When player loses all HP his nickname's color changes to red.
 ## Gratitudes
 [Vitalik Tsarik](https://github.com/VitalikTsarik)
 
-[Alexei Kedo](https://eune.op.gg/summoner/userName=alex+000+01)
+[Aleksei Kedo](https://eune.op.gg/summoner/userName=alex+000+01)

@@ -1,8 +1,13 @@
 # Simple Co-op Shooter
 
-## Tools
+# Description
+This game is made as a groop university project. The main goal was to set connection between computers in one local network and use it. 
+
+The project is made in C++ with SFML. To connect players we added ``` winsock.h ``` library.
 
 ## Start
+The game is designed in such a way that one of players is a server and others are clients. After launching, host has to click the "HOST" button and clients have to enter IP of the host before clicking the "CLIENT" button.
+
 <p float="left">
 <img src="https://user-images.githubusercontent.com/64905551/136289216-82c82e0b-79be-4889-b712-a9791a8e7905.png" width="480" />
 <img src="https://user-images.githubusercontent.com/64905551/136289252-5b63391d-c84b-478d-8613-5f7c96ffd2b2.png" width="480" />

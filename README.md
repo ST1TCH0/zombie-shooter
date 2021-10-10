@@ -25,7 +25,7 @@ After game started you can see all players with their nicknames and health bars 
 When player loses all HP his nickname's color changes to red.
 
 <p align="center">
-  <img class="image" src="https://user-images.githubusercontent.com/64905551/136290324-d83cf778-3399-4f4c-9610-4d9ceb03e92c.png" width="700" margin-left="100"/>
+  <img class="image" src="https://user-images.githubusercontent.com/64905551/136676737-456d9bf5-88aa-4c6d-90f7-12174882ba17.png" width="700" margin-left="100"/>
 </p>
 
 ## To do

@@ -19,7 +19,8 @@ The project is made in C++ with SFML. To connect players we added ``` winsock.h 
 After game started you can see all players with their nicknames and health bars at the center of the map. Players use WASD to move and mouse to aim and shoot. In top left corner there are kill score and FPS counter.
 
 <p align="center">
-  <img class="image" src="https://user-images.githubusercontent.com/64905551/136290662-89fc4786-02d0-45d3-92d9-2e15c5586ac7.gif" width="700" margin-left="100"/>
+  
+  <img class="image" src="https://user-images.githubusercontent.com/64905551/136704668-d25e9eb7-5aed-4702-9ad3-8dbc08dcdeda.gif" width="700" margin-left="100"/>
 </p>
 
 When player loses all HP his nickname's color changes to red.

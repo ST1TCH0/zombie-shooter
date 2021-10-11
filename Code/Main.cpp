@@ -219,7 +219,7 @@ int main() {
 
 	std::string nn;
 
-	Device* device = OpenMenu(window, data);
+	
 
 	std::vector<SoundBuffer> buffer;
 
@@ -263,324 +263,325 @@ int main() {
 	float player_speed = 2.0f;
 	double zombie_speed = 0.5;
 	bool is_pause = false;
+	while (true) {
+		Device* device = OpenMenu(window, data);
+		{
+			SoundBuffer buff;
+			buff.loadFromFile("Sounds/wait.ogg");
+			Sound wait;
+			wait.setBuffer(buff);
+			wait.setVolume(50);
+			wait.setLoop(1);
+			wait.play();
+			while (data->players.size() < 2) {
 
-	{
-		SoundBuffer buff;
-		buff.loadFromFile("Sounds/wait.ogg");
-		Sound wait;
-		wait.setBuffer(buff);
-		wait.setVolume(50);
-		wait.setLoop(1);
-		wait.play();
-		while (data->players.size() < 2) {
-
-			render.UIWait();
+				render.UIWait();
+			}
+			wait.stop();
 		}
-		wait.stop();
-	}
 
-	//std::vector<Enemy> data->enemies = data->data->enemies;
-	//std::vector<Player> data->players = data->data->players;
-	std::vector<std::vector<Bullet>> bullets;
-	for (int i = 0; i < 4; i++)
-		bullets.push_back(std::vector<Bullet>());
-	std::vector<Particle> particles;
+		//std::vector<Enemy> data->enemies = data->data->enemies;
+		//std::vector<Player> data->players = data->data->players;
+		std::vector<std::vector<Bullet>> bullets;
+		for (int i = 0; i < 4; i++)
+			bullets.push_back(std::vector<Bullet>());
+		std::vector<Particle> particles;
 
-	Clock clock;
-	float lastTime = 0;
-	float fps = 60;
+		Clock clock;
+		float lastTime = 0;
+		float fps = 60;
 
-	int score = 0;
-	int framecounter = 0;
+		int score = 0;
+		int framecounter = 0;
 
-	Sound battle_theme;
-	battle_theme.setBuffer(buffer[0]);
-	battle_theme.setLoop(1);
-	battle_theme.setVolume(50);
-	battle_theme.play();
+		Sound battle_theme;
+		battle_theme.setBuffer(buffer[0]);
+		battle_theme.setLoop(1);
+		battle_theme.setVolume(50);
+		battle_theme.play();
 
-	Clock mClock;
-	int mFrame = 0;
+		Clock mClock;
+		int mFrame = 0;
 
-	while (window.isOpen()) {
-		//if (device->getLoaded()) {
-			//device->getMtx()->lock();
-			//data->enemies = data->data->enemies;
-			//data->players = data->data->players;
+		while (window.isOpen()) {
+			//if (device->getLoaded()) {
+				//device->getMtx()->lock();
+				//data->enemies = data->data->enemies;
+				//data->players = data->data->players;
 			score = data->score;
 			//device->getMtx()->unlock();
 			device->setLoaded(0);
-		//}
+			//}
 
-		Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == Event::Closed)
-				window.close();
-		}
+			Event event;
+			while (window.pollEvent(event))
+			{
+				if (event.type == Event::Closed)
+					window.close();
+			}
 
-		if (data->players[device->getRole()].isDead() && !play_dead) {
-			play_dead = true;
-			death.setBuffer(buffer[12]);
-			death.play();
-		}
+			if (data->players[device->getRole()].isDead() && !play_dead) {
+				play_dead = true;
+				death.setBuffer(buffer[12]);
+				death.play();
+			}
 
-		//Update
-		//Vectors
-		playerCenter = data->players[device->getRole()].getPosition();
-		mousePosWindow = Vector2f(Mouse::getPosition(window));
-		aimDir = mousePosWindow - playerCenter;
-		aimDirNorm = aimDir / (float)sqrt(pow(aimDir.x, 2) + pow(aimDir.y, 2));
-		data->players[device->getRole()].setAim(aimDirNorm);
+			//Update
+			//Vectors
+			playerCenter = data->players[device->getRole()].getPosition();
+			mousePosWindow = Vector2f(Mouse::getPosition(window));
+			aimDir = mousePosWindow - playerCenter;
+			aimDirNorm = aimDir / (float)sqrt(pow(aimDir.x, 2) + pow(aimDir.y, 2));
+			data->players[device->getRole()].setAim(aimDirNorm);
 
-		if (!data->players[device->getRole()].isDead()) {
-			float PI = 3.14159265f;
-			float deg = atan2(aimDirNorm.y, aimDirNorm.x) * 180 / PI;
-			data->players[device->getRole()].setRotation(deg + 90);
-		}
+			if (!data->players[device->getRole()].isDead()) {
+				float PI = 3.14159265f;
+				float deg = atan2(aimDirNorm.y, aimDirNorm.x) * 180 / PI;
+				data->players[device->getRole()].setRotation(deg + 90);
+			}
 
-		pdir = 0;
+			pdir = 0;
 
-		if (!data->players[device->getRole()].isDead()) {
+			if (!data->players[device->getRole()].isDead()) {
 
-			//Player
-			if (Keyboard::isKeyPressed(Keyboard::A)) {
-				if (step_cntr % 20 == 0) {
-					step.setBuffer(buffer[7 + (rand() % 3)]);
-					step.play();
+				//Player
+				if (Keyboard::isKeyPressed(Keyboard::A)) {
+					if (step_cntr % 20 == 0) {
+						step.setBuffer(buffer[7 + (rand() % 3)]);
+						step.play();
+					}
+					pdir += 1;
 				}
-				pdir += 1;
-			}
 
-			if (Keyboard::isKeyPressed(Keyboard::D)) {
-				if (step_cntr % 20 == 0) {
-					step.setBuffer(buffer[7 + (rand() % 3)]);
-					step.play();
+				if (Keyboard::isKeyPressed(Keyboard::D)) {
+					if (step_cntr % 20 == 0) {
+						step.setBuffer(buffer[7 + (rand() % 3)]);
+						step.play();
+					}
+					pdir += 2;
 				}
-				pdir += 2;
-			}
 
-			if (Keyboard::isKeyPressed(Keyboard::W)) {
-				if (step_cntr % 20 == 0) {
-					step.setBuffer(buffer[7 + (rand() % 3)]);
-					step.play();
+				if (Keyboard::isKeyPressed(Keyboard::W)) {
+					if (step_cntr % 20 == 0) {
+						step.setBuffer(buffer[7 + (rand() % 3)]);
+						step.play();
+					}
+					pdir += 4;
 				}
-				pdir += 4;
-			}
 
-			if (Keyboard::isKeyPressed(Keyboard::S)) {
-				if (step_cntr % 20 == 0) {
-					step.setBuffer(buffer[7 + (rand() % 3)]);
-					step.play();
+				if (Keyboard::isKeyPressed(Keyboard::S)) {
+					if (step_cntr % 20 == 0) {
+						step.setBuffer(buffer[7 + (rand() % 3)]);
+						step.play();
+					}
+					pdir += 8;
 				}
-				pdir += 8;
-			}
-			data->players[device->getRole()].setDir(pdir);
-			if (step_cntr % 20 == 0) step_cntr = 0;
-			step_cntr++;
+				data->players[device->getRole()].setDir(pdir);
+				if (step_cntr % 20 == 0) step_cntr = 0;
+				step_cntr++;
 
-		}
-
-		if (Mouse::isButtonPressed(Mouse::Left) && !data->players[device->getRole()].isDead()) {
-			data->players[device->getRole()].setClick(true);
-		}
-		else
-			data->players[device->getRole()].setClick(false);
-
-		for (int i = 0; i < data->players.size(); i++) {
-			if (data->players[i].getClick() && b_cntr % 10 == 0) {
-				b1.shape.setPosition(data->players[i].getPosition());
-				aimDir = mousePosWindow - data->players[i].getPosition();
-				aimDirNorm = aimDir / (float)sqrt(pow(aimDir.x, 2) + pow(aimDir.y, 2));
-				b1.currVelocity = data->players[i].getAim() * b1.maxSpeed;
-				b1.shape.setRotation(data->players[i].getRotation());
-				bullets[i].push_back(b1);
-				shoot.setBuffer(buffer[11]);
-				shoot.play();
-
-				b_cntr = 0;
-
-				Particle smoke(&render.GetTexture("smoke"), Color(90, 90, 90, 255), 80, 30, 1);
-				smoke.setPosition(data->players[i].getPosition() - Vector2f(12.5, 12.5));
-				particles.push_back(smoke);
-
-				Particle light(&render.GetTexture("light"), Color(255, 255, 0, 0), 5, 30, 2);
-				light.setPosition(data->players[i].getPosition() - Vector2f(12.5, 12.5));
-				particles.push_back(light);
 			}
 
-			temp = data->players[i].getDir();
-			switch (temp) {
-			case 1:
-				if (data->players[i].getPosition().x > 13)
-					data->players[i].move(-player_speed, 0.f);
-				break;
-			case 2:
-				if (data->players[i].getPosition().x < window.getSize().x - 13)
-					data->players[i].move(player_speed, 0.f);
-				break;
-			case 4:
-				if (data->players[i].getPosition().y > 13)
-					data->players[i].move(0.f, -player_speed);
-				break;
-			case 5:
-				if (data->players[i].getPosition().x > 13 && data->players[i].getPosition().y > 13)
-					data->players[i].move(-player_speed / 1.414, -player_speed / 1.414);
-				else if (data->players[i].getPosition().x > 13)
-					data->players[i].move(-player_speed, 0.f);
-				else if (data->players[i].getPosition().y > 13)
-					data->players[i].move(0.f, -player_speed);
-				break;
-			case 6:
-				if (data->players[i].getPosition().x < window.getSize().x - 13 && data->players[i].getPosition().y > 13)
-					data->players[i].move(player_speed / 1.414, -player_speed / 1.414);
-				else if (data->players[i].getPosition().x < window.getSize().x - 13)
-					data->players[i].move(player_speed, 0.f);
-				else if (data->players[i].getPosition().y > 13)
-					data->players[i].move(0.f, -player_speed);
-				break;
-			case 8:
-				if (data->players[i].getPosition().y < window.getSize().y - 13)
-					data->players[i].move(0.f, player_speed);
-				break;
-			case 9:
-				if (data->players[i].getPosition().x > 13 && data->players[i].getPosition().y < window.getSize().y - 13)
-					data->players[i].move(-player_speed / 1.414, player_speed / 1.414);
-				else if (data->players[i].getPosition().x > 13)
-					data->players[i].move(-player_speed, 0.f);
-				else if (data->players[i].getPosition().y < window.getSize().y - 13)
-					data->players[i].move(0.f, player_speed);
-				break;
-			case 10:
-				if (data->players[i].getPosition().x < window.getSize().x - 13 && data->players[i].getPosition().y < window.getSize().y - 13)
-					data->players[i].move(player_speed / 1.414, player_speed / 1.414);
-				else if (data->players[i].getPosition().x < window.getSize().x - 13)
-					data->players[i].move(player_speed, 0.f);
-				else if (data->players[i].getPosition().y < window.getSize().y - 13)
-					data->players[i].move(0.f, player_speed);
-				break;
+			if (Mouse::isButtonPressed(Mouse::Left) && !data->players[device->getRole()].isDead()) {
+				data->players[device->getRole()].setClick(true);
 			}
-		}
-		//data->enemies
-		if (device->getRole() == 0) {
-			int p = rand() % 1000;
+			else
+				data->players[device->getRole()].setClick(false);
 
-			if (p < spawn) {
-				int i = rand() % 4;
-				p = rand();
-				switch (i) {
-				case 0:
-					enemy.setPosition(Vector2f(rand() % (window.getSize().x + 100), -50));
-					break;
+			for (int i = 0; i < data->players.size(); i++) {
+				if (data->players[i].getClick() && b_cntr % 10 == 0) {
+					b1.shape.setPosition(data->players[i].getPosition());
+					aimDir = mousePosWindow - data->players[i].getPosition();
+					aimDirNorm = aimDir / (float)sqrt(pow(aimDir.x, 2) + pow(aimDir.y, 2));
+					b1.currVelocity = data->players[i].getAim() * b1.maxSpeed;
+					b1.shape.setRotation(data->players[i].getRotation());
+					bullets[i].push_back(b1);
+					shoot.setBuffer(buffer[11]);
+					shoot.play();
+
+					b_cntr = 0;
+
+					Particle smoke(&render.GetTexture("smoke"), Color(90, 90, 90, 255), 80, 30, 1);
+					smoke.setPosition(data->players[i].getPosition() - Vector2f(12.5, 12.5));
+					particles.push_back(smoke);
+
+					Particle light(&render.GetTexture("light"), Color(255, 255, 0, 0), 5, 30, 2);
+					light.setPosition(data->players[i].getPosition() - Vector2f(12.5, 12.5));
+					particles.push_back(light);
+				}
+
+				temp = data->players[i].getDir();
+				switch (temp) {
 				case 1:
-					enemy.setPosition(Vector2f(rand() % (window.getSize().x + 100), window.getSize().y + 50));
+					if (data->players[i].getPosition().x > 13)
+						data->players[i].move(-player_speed, 0.f);
 					break;
 				case 2:
-					enemy.setPosition(Vector2f(-50, rand() % (window.getSize().y + 100)));
+					if (data->players[i].getPosition().x < window.getSize().x - 13)
+						data->players[i].move(player_speed, 0.f);
 					break;
-				case 3:
-					enemy.setPosition(Vector2f(window.getSize().x + 50, rand() % (window.getSize().y + 100)));
+				case 4:
+					if (data->players[i].getPosition().y > 13)
+						data->players[i].move(0.f, -player_speed);
+					break;
+				case 5:
+					if (data->players[i].getPosition().x > 13 && data->players[i].getPosition().y > 13)
+						data->players[i].move(-player_speed / 1.414, -player_speed / 1.414);
+					else if (data->players[i].getPosition().x > 13)
+						data->players[i].move(-player_speed, 0.f);
+					else if (data->players[i].getPosition().y > 13)
+						data->players[i].move(0.f, -player_speed);
+					break;
+				case 6:
+					if (data->players[i].getPosition().x < window.getSize().x - 13 && data->players[i].getPosition().y > 13)
+						data->players[i].move(player_speed / 1.414, -player_speed / 1.414);
+					else if (data->players[i].getPosition().x < window.getSize().x - 13)
+						data->players[i].move(player_speed, 0.f);
+					else if (data->players[i].getPosition().y > 13)
+						data->players[i].move(0.f, -player_speed);
+					break;
+				case 8:
+					if (data->players[i].getPosition().y < window.getSize().y - 13)
+						data->players[i].move(0.f, player_speed);
+					break;
+				case 9:
+					if (data->players[i].getPosition().x > 13 && data->players[i].getPosition().y < window.getSize().y - 13)
+						data->players[i].move(-player_speed / 1.414, player_speed / 1.414);
+					else if (data->players[i].getPosition().x > 13)
+						data->players[i].move(-player_speed, 0.f);
+					else if (data->players[i].getPosition().y < window.getSize().y - 13)
+						data->players[i].move(0.f, player_speed);
+					break;
+				case 10:
+					if (data->players[i].getPosition().x < window.getSize().x - 13 && data->players[i].getPosition().y < window.getSize().y - 13)
+						data->players[i].move(player_speed / 1.414, player_speed / 1.414);
+					else if (data->players[i].getPosition().x < window.getSize().x - 13)
+						data->players[i].move(player_speed, 0.f);
+					else if (data->players[i].getPosition().y < window.getSize().y - 13)
+						data->players[i].move(0.f, player_speed);
 					break;
 				}
-
-				data->enemies.push_back(enemy);
 			}
+			//data->enemies
+			if (device->getRole() == 0) {
+				int p = rand() % 1000;
 
-			spawnCounter = 0;
-			if (framecounter % 30 == 0) {
-				spawn++;
-			}
-
-		}
-		b_cntr++;
-
-		//Shooting
-		for (size_t k = 0; k < data->enemies.size(); k++) {
-
-			Vector2f epos;
-			dtemp = 100000000;
-			temp = 0;
-			for (int i = 0; i < data->players.size(); i++) {
-				if (!data->players[i].isDead()) {
-					dtemp2 = pow(data->players[i].getPosition().x - data->enemies[k].getPosition().x, 2) + pow(data->players[i].getPosition().y - data->enemies[k].getPosition().y, 2);
-					if (dtemp2 < dtemp) {
-						temp = i;
-						dtemp = dtemp2;
+				if (p < spawn) {
+					int i = rand() % 4;
+					p = rand();
+					switch (i) {
+					case 0:
+						enemy.setPosition(Vector2f(rand() % (window.getSize().x + 100), -50));
+						break;
+					case 1:
+						enemy.setPosition(Vector2f(rand() % (window.getSize().x + 100), window.getSize().y + 50));
+						break;
+					case 2:
+						enemy.setPosition(Vector2f(-50, rand() % (window.getSize().y + 100)));
+						break;
+					case 3:
+						enemy.setPosition(Vector2f(window.getSize().x + 50, rand() % (window.getSize().y + 100)));
+						break;
 					}
+
+					data->enemies.push_back(enemy);
 				}
+
+				spawnCounter = 0;
+				if (framecounter % 30 == 0) {
+					spawn++;
+				}
+
 			}
-			dtemp = sqrt(dtemp);
-			epos.x = zombie_speed / dtemp * (data->players[temp].getPosition().x - data->enemies[k].getPosition().x);
-			epos.y = zombie_speed / dtemp * (data->players[temp].getPosition().y - data->enemies[k].getPosition().y);
+			b_cntr++;
 
-			data->enemies.at(k).setPosition(data->enemies[k].getPosition() + epos);
+			//Shooting
+			for (size_t k = 0; k < data->enemies.size(); k++) {
 
-			Vector2f zaimDir = (data->enemies[k].getPosition() + epos - data->players[temp].getPosition());
-			Vector2f zaimDirNorm = zaimDir / (float)sqrt(pow(zaimDir.x, 2) + pow(zaimDir.y, 2));
-
-			float PI = 3.14159265f;
-			float deg = atan2(zaimDirNorm.y, zaimDirNorm.x) * 180 / PI;
-			data->enemies.at(k).setRotation(deg + 90);
-
-			for (int i = 0; i < data->players.size(); i++) {
-				if (data->players[i].getVisual()->getGlobalBounds().intersects(data->enemies[k].getGlobalBounds()) && b_cntr % 10 == 0 && !data->players[i].isDead()) {
-					if (i == device->getRole()) {
-						hurt.setBuffer(buffer[1 + (rand() % 6)]);
-						hurt.play();
-					}
-					data->players[i].setHealth(data->players[i].getHealth() - 1);
-				}
-			}
-		}
-		for (int j = 0; j < bullets.size(); j++) {
-			size_t bsize = bullets[j].size();
-			for (size_t i = 0; i < bsize; i++)
-			{
-				bullets[j][i].shape.move(bullets[j][i].currVelocity);
-
-				//Out of bounds
-				if (bullets[j][i].shape.getPosition().x < 0 || bullets[j][i].shape.getPosition().x > window.getSize().x
-					|| bullets[j][i].shape.getPosition().y < 0 || bullets[j][i].shape.getPosition().y > window.getSize().y)
-				{
-					bullets[j].erase(bullets[j].begin() + i);
-
-				}
-				else
-				{
-					//Enemy collision
-					for (size_t k = 0; k < data->enemies.size(); k++)
-					{
-						if (bullets[j][i].shape.getGlobalBounds().intersects(data->enemies[k].getGlobalBounds()))
-						{
-							Particle blood(&render.GetTexture("blood"), Color::Red, 250, 50, 0);
-							blood.setPosition(data->enemies.at(k).getPosition());
-							blood.setRotation(data->enemies.at(k).getRotation());
-							particles.push_back(blood);
-
-							bullets[j].erase(bullets[j].begin() + i);
-							data->enemies.erase(data->enemies.begin() + k);
-							z_death.setBuffer(buffer[13 + (rand() % 3)]);
-							z_death.play();
-							//data->players[i].addScore();
-							if (device->getRole() == 0) {
-								score++;
-								data->players[0].setScore(score);
-							}
-
-							break;
+				Vector2f epos;
+				dtemp = 100000000;
+				temp = 0;
+				for (int i = 0; i < data->players.size(); i++) {
+					if (!data->players[i].isDead()) {
+						dtemp2 = pow(data->players[i].getPosition().x - data->enemies[k].getPosition().x, 2) + pow(data->players[i].getPosition().y - data->enemies[k].getPosition().y, 2);
+						if (dtemp2 < dtemp) {
+							temp = i;
+							dtemp = dtemp2;
 						}
 					}
 				}
-				bsize = bullets[j].size();
+				dtemp = sqrt(dtemp);
+				epos.x = zombie_speed / dtemp * (data->players[temp].getPosition().x - data->enemies[k].getPosition().x);
+				epos.y = zombie_speed / dtemp * (data->players[temp].getPosition().y - data->enemies[k].getPosition().y);
+
+				data->enemies.at(k).setPosition(data->enemies[k].getPosition() + epos);
+
+				Vector2f zaimDir = (data->enemies[k].getPosition() + epos - data->players[temp].getPosition());
+				Vector2f zaimDirNorm = zaimDir / (float)sqrt(pow(zaimDir.x, 2) + pow(zaimDir.y, 2));
+
+				float PI = 3.14159265f;
+				float deg = atan2(zaimDirNorm.y, zaimDirNorm.x) * 180 / PI;
+				data->enemies.at(k).setRotation(deg + 90);
+
+				for (int i = 0; i < data->players.size(); i++) {
+					if (data->players[i].getVisual()->getGlobalBounds().intersects(data->enemies[k].getGlobalBounds()) && b_cntr % 10 == 0 && !data->players[i].isDead()) {
+						if (i == device->getRole()) {
+							hurt.setBuffer(buffer[1 + (rand() % 6)]);
+							hurt.play();
+						}
+						data->players[i].setHealth(data->players[i].getHealth() - 1);
+					}
+				}
 			}
-		}
+			for (int j = 0; j < bullets.size(); j++) {
+				size_t bsize = bullets[j].size();
+				for (size_t i = 0; i < bsize; i++)
+				{
+					bullets[j][i].shape.move(bullets[j][i].currVelocity);
 
-		for (size_t i = 0; i < particles.size(); i++) {
-			if (!particles.at(i).Update()) particles.erase(particles.begin() + i);
-		}
+					//Out of bounds
+					if (bullets[j][i].shape.getPosition().x < 0 || bullets[j][i].shape.getPosition().x > window.getSize().x
+						|| bullets[j][i].shape.getPosition().y < 0 || bullets[j][i].shape.getPosition().y > window.getSize().y)
+					{
+						bullets[j].erase(bullets[j].begin() + i);
 
-		//if (device->getReady()) {
-			//device->getMtx()->lock();
+					}
+					else
+					{
+						//Enemy collision
+						for (size_t k = 0; k < data->enemies.size(); k++)
+						{
+							if (bullets[j][i].shape.getGlobalBounds().intersects(data->enemies[k].getGlobalBounds()))
+							{
+								Particle blood(&render.GetTexture("blood"), Color::Red, 250, 50, 0);
+								blood.setPosition(data->enemies.at(k).getPosition());
+								blood.setRotation(data->enemies.at(k).getRotation());
+								particles.push_back(blood);
+
+								bullets[j].erase(bullets[j].begin() + i);
+								data->enemies.erase(data->enemies.begin() + k);
+								z_death.setBuffer(buffer[13 + (rand() % 3)]);
+								z_death.play();
+								//data->players[i].addScore();
+								if (device->getRole() == 0) {
+									score++;
+									data->players[0].setScore(score);
+								}
+
+								break;
+							}
+						}
+					}
+					bsize = bullets[j].size();
+				}
+			}
+
+			for (size_t i = 0; i < particles.size(); i++) {
+				if (!particles.at(i).Update()) particles.erase(particles.begin() + i);
+			}
+
+			//if (device->getReady()) {
+				//device->getMtx()->lock();
 			if (device->getRole()) {
 				device->setMe(data->players[device->getRole()]);
 			}
@@ -591,98 +592,116 @@ int main() {
 			}
 			//device->getMtx()->unlock();
 			device->setReady(0);
-		/*}
-		//else {
-			if (!device->getRole()) {
-				data->data->enemies = data->enemies;
-				data->data->players = data->players;
-				data->score = score;
+			/*}
+			//else {
+				if (!device->getRole()) {
+					data->data->enemies = data->enemies;
+					data->data->players = data->players;
+					data->score = score;
+				}
+			}*/
+
+			//Draw
+			render.RenderStatic();
+
+			for (size_t i = 0; i < particles.size(); i++) {
+				if (particles[i].getType() != 1) window.draw(particles[i].getVisual());
+				else if (particles[i].getType() == 1 || particles[i].getType() == 2) window.draw(particles[i].getVisual(), particles[i].getTransf());
 			}
-		}*/
 
-		//Draw
-		render.RenderStatic();
+			for (size_t i = 0; i < data->enemies.size(); i++) {
+				data->enemies[i].setTexture(&render.GetTexture("zombie"));
+				window.draw(data->enemies[i]);
+			}
 
-		for (size_t i = 0; i < particles.size(); i++) {
-			if (particles[i].getType() != 1) window.draw(particles[i].getVisual());
-			else if (particles[i].getType() == 1 || particles[i].getType() == 2) window.draw(particles[i].getVisual(), particles[i].getTransf());
-		}
+			for (int i = 0; i < data->players.size(); i++) {
+				data->players[i].Update();
+				Text nick;
+				Font font = render.GetFont();
+				Vector2f ppos = data->players[i].getPosition();
+				ppos.y = ppos.y + 30;
+				nick.setPosition(ppos);
+				nick.setFillColor(Color::White);
+				nick.setCharacterSize(24);
+				nick.setString(data->players[i].getNickname());
+				nick.setFont(font);
 
-		for (size_t i = 0; i < data->enemies.size(); i++) {
-			data->enemies[i].setTexture(&render.GetTexture("zombie"));
-			window.draw(data->enemies[i]);
-		}
+				Text health;
+				ppos.x = ppos.x - 45;
+				health.setPosition(ppos);
+				health.setFillColor(Color::Red);
+				health.setCharacterSize(24);
 
-		for (int i = 0; i < data->players.size(); i++) {
-			data->players[i].Update();
-			Text nick;
+				std::string h = "";
+				int n = (int)data->players[i].getHealth() / 10;
+
+				for (int j = 0; j < n; j++) h.append("|");
+
+				if (data->players[i].isDead() == true) nick.setFillColor(Color::Red);
+
+				health.setString(h);
+				health.setFont(font);
+
+				window.draw(nick);
+				window.draw(health);
+				data->players[i].getVisual()->setTexture(&render.GetTexture("player"));
+				window.draw(*data->players[i].getVisual());
+
+			}
+
 			Font font = render.GetFont();
-			Vector2f ppos = data->players[i].getPosition();
-			ppos.y = ppos.y + 30;
-			nick.setPosition(ppos);
-			nick.setFillColor(Color::White);
-			nick.setCharacterSize(24);
-			nick.setString(data->players[i].getNickname());
-			nick.setFont(font);
 
-			Text health;
-			ppos.x = ppos.x - 45;
-			health.setPosition(ppos);
-			health.setFillColor(Color::Red);
-			health.setCharacterSize(24);
+			Text tscore;
+			tscore.setPosition(Vector2f(10, 10));
+			tscore.setFillColor(Color::Green);
+			tscore.setCharacterSize(32);
+			tscore.setString("Score: " + std::to_string(score));
+			tscore.setFont(font);
 
-			std::string h = "";
-			int n = (int)data->players[i].getHealth() / 10;
+			Text fpst;
+			fpst.setPosition(Vector2f(10, 30));
+			fpst.setFillColor(Color::Green);
+			fpst.setCharacterSize(32);
+			if (mClock.getElapsedTime().asSeconds() >= 1.f)
+			{
+				fps = mFrame;
+				mFrame = 0;
+				mClock.restart();
+			}
 
-			for (int j = 0; j < n; j++) h.append("|");
+			++mFrame;
+			fpst.setString(" ");
+			fpst.setString("FPS: " + std::to_string((int)fps));
+			fpst.setFont(font);
 
-			if (data->players[i].getHealth() < 1) h = "DEAD";
+			window.draw(fpst);
+			window.draw(tscore);
 
-			health.setString(h);
-			health.setFont(font);
+			for (size_t i = 0; i < bullets.size(); i++)
+				for (size_t j = 0; j < bullets[i].size(); j++)
+					window.draw(bullets[i][j].shape);
 
-			window.draw(nick);
-			window.draw(health);
-			data->players[i].getVisual()->setTexture(&render.GetTexture("player"));
-			window.draw(*data->players[i].getVisual());
+			window.display();
+			framecounter++;
 
+			temp = 0;
+			for (int i = 0; i < data->players.size(); i++)
+				if (data->players[i].isDead() == true)
+					temp++;
+			if (temp == data->players.size()) {
+				Text endscore;
+				endscore.setPosition(Vector2f(600, 300));
+				endscore.setFillColor(Color::White);
+				endscore.setCharacterSize(150);
+				endscore.setString("Score: " + std::to_string(score));
+				endscore.setFont(font);
+				window.draw(endscore);
+				window.display();
+				while (!Keyboard::isKeyPressed(Keyboard::Enter));
+				break;
+			}
+			
 		}
-
-		Font font = render.GetFont();
-
-		Text tscore;
-		tscore.setPosition(Vector2f(10, 10));
-		tscore.setFillColor(Color::Green);
-		tscore.setCharacterSize(32);
-		tscore.setString("Score: " + std::to_string(score));
-		tscore.setFont(font);
-
-		Text fpst;
-		fpst.setPosition(Vector2f(10, 30));
-		fpst.setFillColor(Color::Green);
-		fpst.setCharacterSize(32);
-		if (mClock.getElapsedTime().asSeconds() >= 1.f)
-		{
-			fps = mFrame;
-			mFrame = 0;
-			mClock.restart();
-		}
-
-		++mFrame;
-		fpst.setString(" ");
-		fpst.setString("FPS: " + std::to_string((int)fps));
-		fpst.setFont(font);
-
-		window.draw(fpst);
-		window.draw(tscore);
-
-		for (size_t i = 0; i < bullets.size(); i++)
-			for (size_t j = 0; j < bullets[i].size(); j++)
-				window.draw(bullets[i][j].shape);
-
-		window.display();
-		framecounter++;
 	}
-
 	return 0;
 }
